@@ -26,9 +26,22 @@ function ScreenSource(props) {
       setSourceList(body.sources)
     }
 
+    const updateLanguageDB = async() => {
+      const data_lang = await fetch(
+        '/set-language', {
+          method: 'PUT',
+          headers: {'Content-Type':'application/x-www-form-urlencoded'},
+          body: `token=${props.token}&language=${selectedLang}`
+          });
+      const body_lang = await data_lang.json()
+      console.log(body_lang)
+    }
+
     APIResultsLoading()
+    updateLanguageDB()
   }, [selectedLang])
 
+  
   return (
     <div>
         <Nav/>
@@ -62,7 +75,7 @@ function ScreenSource(props) {
 }
 
 function mapStateToProps(state){
-  return {selectedLang: state.selectedLang}
+  return {selectedLang: state.selectedLang, token: state.token}
 }
 
 function mapDispatchToProps(dispatch){
