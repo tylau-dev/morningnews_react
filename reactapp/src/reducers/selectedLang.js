@@ -1,4 +1,4 @@
-export default function(selectedLang = null, action){
+export default function(selectedLang = 'fr', action){
     if(action.type == 'changeLang'){
         return action.selectedLang
     } else {

@@ -47,7 +47,7 @@ function ScreenArticlesBySource(props) {
         '/add-wishlist', {
           method: 'POST',
           headers: {'Content-Type':'application/x-www-form-urlencoded'},
-          body: `title=${article.title}&description=${article.description}&content=${article.content}&image=${article.urlToImage}&token=${props.token}`
+          body: `title=${article.title}&description=${article.description}&content=${article.content}&image=${article.urlToImage}&token=${props.token}&language=${props.selectedLang}`
           });
       const body = await data.json()
       console.log(body)
@@ -119,7 +119,7 @@ function ScreenArticlesBySource(props) {
 }
 
 function mapStateToProps(state){
-  return {token: state.token}
+  return {selectedLang: state.selectedLang, token: state.token}
 }
 
 

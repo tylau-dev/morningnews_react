@@ -13,6 +13,8 @@ function ScreenMyArticles(props) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [wishlistArticle, setWishlistArticle] = useState([])
+  const [userLanguage, setUserLanguage] = useState('')
+  const [filterOn, setFilterOn] = useState(false)
 
   const fetchWishlist = async() => {
     const data = await fetch('/get-wishlist', {
@@ -22,11 +24,18 @@ function ScreenMyArticles(props) {
      })
     const dataJSON = await data.json()
     setWishlistArticle([...dataJSON.wishlist])
-  }  
 
+    if (dataJSON.language === null) {
+      setUserLanguage('fr')
+    }
+    else {
+      setUserLanguage(dataJSON.language)
+    }
+  }  
 
   useEffect(() => {
     fetchWishlist()
+    console.log(props.selectedLang)
   }, [])
 
   var showModal = (title, content) => {
@@ -45,40 +54,50 @@ function ScreenMyArticles(props) {
     setVisible(false)
   } 
 
-  try {
-    var wishlistDisplay = wishlistArticle.map((article, i) => {
-      console.log(article.title)
-      return (
-        <div key={i} style={{display:'flex',justifyContent:'center'}}>
-        <Card
-          style={{ 
-          width: 300, 
-          margin:'15px', 
-          display:'flex',
-          flexDirection: 'column',
-          justifyContent:'space-between' }}
-          cover={
-          <img
-              alt="example"
-              src={article.image}
-          />
-          }
-          actions={[
-              <Icon type="read" key="ellipsis2" onClick={() => showModal(article.title,article.content)} />,
-              <Icon type="delete" key="ellipsis" onClick={() => deleteArticle(article._id)} />
-          ]}
-          >
-          <Meta
-            title={article.title}
-            description={article.description}
-          />
-        </Card>
-        </div>
-      )
-  })}
-  catch(error) {
-    var wishlistDisplay = "Pas d'articles"
+  const filterLanguage = async() => {
+    if (filterOn) {
+      setFilterOn(false);
+      fetchWishlist()
+    }
+    else {
+      let wishlistArticleCopy = [... wishlistArticle]
+      console.log(wishlistArticleCopy)
+      let filterLangugage = wishlistArticleCopy.filter((ele) => ele.language === props.selectedLang)
+      setWishlistArticle([...filterLangugage])
+      setFilterOn(true)
+    }
   }
+
+
+  var wishlistDisplay = wishlistArticle.map((article, i) => {
+    return (
+      <div key={i} style={{display:'flex',justifyContent:'center'}}>
+      <Card
+        style={{ 
+        width: 300, 
+        margin:'15px', 
+        display:'flex',
+        flexDirection: 'column',
+        justifyContent:'space-between' }}
+        cover={
+        <img
+            alt="example"
+            src={article.image}
+        />
+        }
+        actions={[
+            <Icon type="read" key="ellipsis2" onClick={() => showModal(article.title,article.content)} />,
+            <Icon type="delete" key="ellipsis" onClick={() => deleteArticle(article._id)} />
+        ]}
+        >
+        <Meta
+          title={article.title}
+          description={article.description}
+        />
+      </Card>
+      </div>
+    )
+  })
 
   const deleteArticle = async(id) => {
     var deleteResult = await fetch('/delete-wishlist', {
@@ -93,11 +112,12 @@ function ScreenMyArticles(props) {
   }
 
 
+
   return (
     <div>
         <Nav/>
         <div style={{display:'flex', justifyContent:'center', alignItems:'center'}} className="Banner">
-          <img src='images/filter.png' style={{width:'40px', margin:'10px',cursor:'pointer'}} alt=''/>
+          <img src='images/filter.png' style={{width:'40px', margin:'10px',cursor:'pointer'}} alt='' onClick={() => filterLanguage(userLanguage)}/>
         </div>
         <div className="Card">
               {wishlistDisplay}
@@ -118,7 +138,8 @@ function ScreenMyArticles(props) {
 function mapStateToProps(state){
   return {
     myArticles: state.wishList,
-    token: state.token
+    token: state.token,
+    selectedLang: state.selectedLang
   }
 }
 

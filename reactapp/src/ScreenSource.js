@@ -11,31 +11,33 @@ function ScreenSource(props) {
   const [selectedLang, setSelectedLang] = useState(props.selectedLang)
   const languageList = ['fr', 'en']
 
-  useEffect(() => {
-    const APIResultsLoading = async() => {
-      var langue = 'fr'
-      var country = 'fr'
-        
-      if(selectedLang === 'en'){
-        var langue = 'en'
-        var country = 'us'
-      }
-      props.changeLang(selectedLang)
-      const data = await fetch(`https://newsapi.org/v2/sources?language=${langue}&country=${country}&apiKey=9980424ff4484813ba7be1fb86a454bf`)
-      const body = await data.json()
-      setSourceList(body.sources)
+  const APIResultsLoading = async() => {
+    var langue = 'fr'
+    var country = 'fr'
+      
+    if(selectedLang === 'en'){
+      var langue = 'en'
+      var country = 'us'
     }
+    props.changeLang(selectedLang)
+    const data = await fetch(`https://newsapi.org/v2/sources?language=${langue}&country=${country}&apiKey=9980424ff4484813ba7be1fb86a454bf`)
+    const body = await data.json()
+    setSourceList(body.sources)
+  }
 
-    const updateLanguageDB = async() => {
-      const data_lang = await fetch(
-        '/set-language', {
-          method: 'PUT',
-          headers: {'Content-Type':'application/x-www-form-urlencoded'},
-          body: `token=${props.token}&language=${selectedLang}`
-          });
-      const body_lang = await data_lang.json()
-      console.log(body_lang)
-    }
+  const updateLanguageDB = async() => {
+    const data_lang = await fetch(
+      '/set-language', {
+        method: 'PUT',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: `token=${props.token}&language=${selectedLang}`
+        });
+    const body_lang = await data_lang.json()
+    console.log(body_lang)
+  }
+
+  useEffect(() => {
+
 
     APIResultsLoading()
     updateLanguageDB()

@@ -122,6 +122,7 @@ router.post('/add-wishlist', async function(req, res){
     var result = true;
   }
   catch (error) {
+    
     var result = false
   }
 
