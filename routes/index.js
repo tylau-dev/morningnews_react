@@ -102,7 +102,7 @@ router.put('/set-language', async function(req, res){
     var result = false
   }
   
-  res.json({result, token, language})
+  res.json({result, token:req.body.token, language:req.body.language})
 })
 
 router.post('/add-wishlist', async function(req, res){
@@ -112,7 +112,10 @@ router.post('/add-wishlist', async function(req, res){
       articles : [ { title: req.body.title, description: req.body.description, content: req.body.content, image: req.body.image, language: req.body.language } ]
     });
     savedArticle = await newWishlist.save();
-    var result = true
+
+    var user = await userModel.findOneAndUpdate({token: req.body.token},{wishlist: savedArticle.id});
+
+    var result = true;
   }
   catch (error) {
     var result = false
