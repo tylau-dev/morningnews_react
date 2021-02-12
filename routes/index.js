@@ -92,4 +92,19 @@ router.post('/sign-in', async function(req,res,next){
 
 })
 
+router.put('/set-language', async function(req, res){
+
+  try {
+    const data = await userModel.updateOne({token: req.body.token}, {language: req.body.language})
+    var result = true
+  }
+  catch (error) {
+    var result = false
+  }
+  
+  res.json({result, token, language})
+})
+
+
+
 module.exports = router;
