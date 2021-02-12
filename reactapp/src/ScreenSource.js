@@ -9,7 +9,7 @@ function ScreenSource(props) {
 
   const [sourceList, setSourceList] = useState([])
   const [selectedLang, setSelectedLang] = useState(props.selectedLang)
-
+  const languageList = ['fr', 'en']
 
   useEffect(() => {
     const APIResultsLoading = async() => {
@@ -47,8 +47,23 @@ function ScreenSource(props) {
         <Nav/>
        
        <div style={{display:'flex', justifyContent:'center', alignItems:'center'}} className="Banner">
-          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/fr.png' onClick={() => setSelectedLang('fr')} />
-          <img style={{width:'40px', margin:'10px',cursor:'pointer'}} src='/images/uk.png' onClick={() => setSelectedLang('en')} /> 
+        {
+          languageList.map((lang, index) => {
+            if (lang === 'en') {
+              var countryImg = '/images/uk.png'
+            }
+            else {var countryImg = `/images/${lang}.png`}
+
+            if (lang === selectedLang) {
+              return(<img style={{width:'40px', margin:'10px',cursor:'pointer', border: '1px solid #FBF2D4'}} src={countryImg} onClick={() => setSelectedLang(lang)} />)
+            }
+            else {
+              return(<img style={{width:'40px', margin:'10px',cursor:'pointer'}} src={countryImg} onClick={() => setSelectedLang(lang)} />)
+
+            }
+          })
+        }
+
         </div>
 
        <div className="HomeThemes">
