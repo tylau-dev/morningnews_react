@@ -105,6 +105,21 @@ router.put('/set-language', async function(req, res){
   res.json({result, token, language})
 })
 
+router.post('/add-wishlist', async function(req, res){
+
+  try {
+    const newWishlist =  new wishlistsModel({
+      articles : [ { title: req.body.title, description: req.body.description, content: req.body.content, image: req.body.image, language: req.body.language } ]
+    });
+    savedArticle = await newWishlist.save();
+    var result = true
+  }
+  catch (error) {
+    var result = false
+  }
+
+  res.json({result, savedArticle})
+})
 
 
 module.exports = router;
