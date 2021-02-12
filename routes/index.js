@@ -109,11 +109,15 @@ router.post('/add-wishlist', async function(req, res){
 
   try {
     const newWishlist =  new wishlistsModel({
-      articles : [ { title: req.body.title, description: req.body.description, content: req.body.content, image: req.body.image, language: req.body.language } ]
+      title: req.body.title, 
+      description: req.body.description, 
+      content: req.body.content, 
+      image: req.body.image, 
+      language: req.body.language
     });
     savedArticle = await newWishlist.save();
 
-    var user = await userModel.findOneAndUpdate({token: req.body.token},{wishlist: savedArticle.id});
+    var user = await userModel.findOneAndUpdate({token: req.body.token},{ $push: {wishlist: savedArticle.id}});
 
     var result = true;
   }
@@ -136,10 +140,10 @@ router.post('/delete-wishlist', async function(req, res) {
   var userToken = req.body.token
   try {
     var userFind = await userModel.findOne({token: userToken})
-    
-    var filterArray = userFind.filter(item => item.wishlist.id === articleToDelete)
+
+    var filterArray = userFind.wishlist.filter(item => item.toString() !== req.body.articleID)
     console.log(filterArray)
-    var saveUser = await filterArray.save()
+    var userFind2 = await userModel.updateOne({token: userToken}, {wishlist: filterArray})
     var result = true
   }
   catch (error) {

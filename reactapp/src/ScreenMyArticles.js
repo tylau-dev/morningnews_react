@@ -14,19 +14,18 @@ function ScreenMyArticles(props) {
   const [content, setContent] = useState('')
   const [wishlistArticle, setWishlistArticle] = useState([])
 
+  const fetchWishlist = async() => {
+    const data = await fetch('/get-wishlist', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: `token=${props.token}`
+     })
+    const dataJSON = await data.json()
+    setWishlistArticle([...dataJSON.wishlist])
+  }  
 
 
   useEffect(() => {
-    const fetchWishlist = async() => {
-      const data = await fetch('/get-wishlist', {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: `token=${props.token}`
-       })
-      const dataJSON = await data.json()
-      console.log(dataJSON.wishlist)      
-      setWishlistArticle([dataJSON.wishlist])
-    }  
     fetchWishlist()
   }, [])
 
@@ -44,14 +43,14 @@ function ScreenMyArticles(props) {
   var handleCancel = e => {
     console.log(e)
     setVisible(false)
-  }
+  } 
 
   try {
-    var wishlistDisplay = wishlistArticle.map((article,i) => (
-      <div key={i} style={{display:'flex',justifyContent:'center'}}>
-
+    var wishlistDisplay = wishlistArticle.map((article, i) => {
+      console.log(article.title)
+      return (
+        <div key={i} style={{display:'flex',justifyContent:'center'}}>
         <Card
-          
           style={{ 
           width: 300, 
           margin:'15px', 
@@ -66,40 +65,31 @@ function ScreenMyArticles(props) {
           }
           actions={[
               <Icon type="read" key="ellipsis2" onClick={() => showModal(article.title,article.content)} />,
-              <Icon type="delete" key="ellipsis" onClick={() => deleteArticle(article.id)} />
+              <Icon type="delete" key="ellipsis" onClick={() => deleteArticle(article._id)} />
           ]}
           >
-
           <Meta
             title={article.title}
             description={article.description}
           />
-
         </Card>
-        <Modal
-          title={title}
-          visible={visible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <p>{title}</p>
-        </Modal>
-
-      </div>
-
-    ))
-  }
+        </div>
+      )
+  })}
   catch(error) {
     var wishlistDisplay = "Pas d'articles"
   }
 
   const deleteArticle = async(id) => {
-    await(fetch('/delete-wishlist', {
+    var deleteResult = await fetch('/delete-wishlist', {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${props.token}&articleID=${id}`
      })
-    )
+    
+    var deleteResultJSON = await deleteResult.json()
+    console.log(deleteResultJSON)
+    fetchWishlist()
   }
 
 
@@ -111,7 +101,16 @@ function ScreenMyArticles(props) {
         </div>
         <div className="Card">
               {wishlistDisplay}
-        </div>
+              <Modal
+          title={title}
+          visible={visible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p>{title}</p>
+        </Modal>
+      </div>
+
     </div>
   );
 }

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
-    wishlist: {type:mongoose.Schema.Types.ObjectId, ref:'wishlists'},
+    wishlist: [{type:mongoose.Schema.Types.ObjectId, ref:'wishlists'}],
     username: String,
     email: String,
     password: String,
