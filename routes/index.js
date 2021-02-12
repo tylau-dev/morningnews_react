@@ -5,7 +5,7 @@ var uid2 = require('uid2')
 var bcrypt = require('bcrypt');
 
 var userModel = require('../models/users')
-var wishlistsModel = require('../models/wishlists')
+var wishlistsModel = require('../models/wishlists');
 
 router.post('/sign-up', async function(req,res,next){
 
@@ -102,7 +102,7 @@ router.put('/set-language', async function(req, res){
     var result = false
   }
   
-  res.json({result, token, language})
+  res.json({result, token: req.body.token, language: req.body.language})
 })
 
 router.post('/add-wishlist', async function(req, res){
@@ -119,6 +119,30 @@ router.post('/add-wishlist', async function(req, res){
   }
 
   res.json({result, savedArticle})
+})
+
+router.post('/get-wishlist', async function(req, res, next) {
+  const user = await userModel.findOne({token: req.body.token}).populate('wishlist').exec()
+  var userWishlist = user.wishlist
+  console.log(userWishlist)
+  res.json({result: true, wishlist: userWishlist})
+})
+
+router.post('/delete-wishlist', async function(req, res) {
+  var articleToDelete = req.body.articleID
+  var userToken = req.body.token
+  try {
+    var userFind = await userModel.findOne({token: userToken})
+    
+    var filterArray = userFind.filter(item => item.wishlist.id === articleToDelete)
+    console.log(filterArray)
+    var saveUser = await filterArray.save()
+    var result = true
+  }
+  catch (error) {
+    var result = false
+  }
+  res.json({result})
 })
 
 

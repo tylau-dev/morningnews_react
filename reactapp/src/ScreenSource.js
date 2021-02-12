@@ -16,7 +16,7 @@ function ScreenSource(props) {
       var langue = 'fr'
       var country = 'fr'
         
-      if(selectedLang == 'en'){
+      if(selectedLang === 'en'){
         var langue = 'en'
         var country = 'us'
       }
