@@ -18,7 +18,6 @@ function ScreenArticlesBySource(props) {
     const findArticles = async() => {
       const data = await fetch(`https://newsapi.org/v2/top-headlines?sources=${props.match.params.id}&apiKey=9980424ff4484813ba7be1fb86a454bf`)
       const body = await data.json()
-      console.log(body)
       setArticleList(body.articles) 
     }
 
@@ -41,6 +40,21 @@ function ScreenArticlesBySource(props) {
     console.log(e)
     setVisible(false)
   }
+
+  var addArticleToWishList = (article) => {
+    const articleToWishlist = async() => {
+      const data = await fetch(
+        '/add-wishlist', {
+          method: 'POST',
+          headers: {'Content-Type':'application/x-www-form-urlencoded'},
+          body: `title=${article.title}&description=${article.description}&content=${article.content}&image=${article.urlToImage}&token=${props.token}`
+          });
+      const body = await data.json()
+      console.log(body)
+      // props.addToWishList(body.SavedArticle.articles[0]);
+    };
+    articleToWishlist();
+  };
 
   return (
     <div>
@@ -69,7 +83,7 @@ function ScreenArticlesBySource(props) {
                   }
                   actions={[
                       <Icon type="read" key="ellipsis2" onClick={() => showModal(article.title,article.content)} />,
-                      <Icon type="like" key="ellipsis" onClick={()=> {props.addToWishList(article)}} />
+                      <Icon type="like" key="ellipsis" onClick={()=> {addArticleToWishList(article)}} />
                   ]}
                   >
 
@@ -104,6 +118,11 @@ function ScreenArticlesBySource(props) {
   );
 }
 
+function mapStateToProps(state){
+  return {token: state.token}
+}
+
+
 function mapDispatchToProps(dispatch){
   return {
     addToWishList: function(article){
@@ -115,6 +134,6 @@ function mapDispatchToProps(dispatch){
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ScreenArticlesBySource)

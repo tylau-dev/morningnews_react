@@ -7,6 +7,7 @@ import {connect} from 'react-redux'
 
 const { Meta } = Card;
 
+
 function ScreenMyArticles(props) {
   const [visible, setVisible] = useState(false)
   const [title, setTitle] = useState('')
